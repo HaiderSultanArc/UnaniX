@@ -1,0 +1,9 @@
+fastapi
+django
+mysqlclient
+passlib[bcrypt]
+pydantic
+python-dotenv
+python-multipart
+python-jose[cryptography]
+uvicorn
