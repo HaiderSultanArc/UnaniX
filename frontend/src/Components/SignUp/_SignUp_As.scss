@@ -1,0 +1,13 @@
+.Card {
+	// min-height: 100vh;
+	// min-width: 100vh;
+
+	.cards {
+		display: flow-root;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0px;
+		display: flex;
+		flex-direction: column;
+	}
+}
