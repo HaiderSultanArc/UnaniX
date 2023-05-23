@@ -119,3 +119,14 @@ class Prevention(BaseModel):
     name_arabic            : str | None = None
     name_hindi             : str | None = None
     description            : str | None = None
+
+
+# --------------------------------- #
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: str

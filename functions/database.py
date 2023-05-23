@@ -52,7 +52,7 @@ def getUserByEmail(email: str):
         }
 
 
-def getPractionerByEmail(email: str):
+def getPractitionerByEmail(email: str):
     """
     Get Practioner by Email
     =======================
@@ -122,6 +122,80 @@ def getPatientByEmail(email: str):
         return {
             "success": False,
             "message": f"Error while getting patient with email: {email}. {error}",
+            "data": None
+        }
+
+
+def getPatientsByPractitioner(email: str):
+    """
+    Get Patient by Practitioner
+    ===========================
+    Parameters:
+    -----------
+        practitionerQuery:
+            description: Practitioner Query
+            dtype: schemas.PractitionerQuery
+    -----------
+    Returns:
+    --------
+        description: Success or Error Message
+        dtype: dict
+        Response Model: {
+            "success": True or False,
+            "message": Response Text,
+            "data": list | None
+        }
+    """
+    
+    try:
+        practitioner = getPractitionerByEmail(email)['data']
+        
+        return {
+            "success": True,
+            "message": "Patients Found",
+            "data": practitioner.patients
+        }
+    except Exception as error:
+        return {
+            "success": False,
+            "message": f"Error while getting patients with practitioner with {email}. {error}",
+            "data": None
+        }
+
+
+def getPractitionersByPatient(email: str):
+    """
+    Get Practitioner by Patient
+    ===========================
+    Parameters:
+    -----------
+        patientQuery:
+            description: Patient Query
+            dtype: schemas.PatientQuery
+    -----------
+    Returns:
+    --------
+        description: Success or Error Message
+        dtype: dict
+        Response Model: {
+            "success": True or False,
+            "message": Response Text,
+            "data": list | None
+        }
+    """
+    
+    try:
+        patient = getPatientByEmail(email)['data']
+        
+        return {
+            "success": True,
+            "message": "Practitioners Found",
+            "data": patient.practitioners
+        }
+    except Exception as error:
+        return {
+            "success": False,
+            "message": f"Error while getting practitioners with patient with {email}. {error}",
             "data": None
         }
 
