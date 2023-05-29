@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
@@ -22,14 +24,6 @@ class PractitionerDiseaseLink(models.Model):
     disease_id              = models.ForeignKey("Disease", on_delete=models.CASCADE)
 
 
-class PractitionerSymptomLink(models.Model):
-    class Meta:
-        db_table = 'practitioner_symptom_link'
-        
-    id                      = models.CharField(max_length=255, primary_key=True)
-    practitioner_id         = models.ForeignKey("Practitioner", on_delete=models.CASCADE)
-    symptom_id              = models.ForeignKey("Symptom", on_delete=models.CASCADE)
-    
 
 class PatientDiseaseLink(models.Model):
     class Meta:
@@ -47,47 +41,56 @@ class PatientSymptomLink(models.Model):
     id                      = models.CharField(max_length=255, primary_key=True)
     patient_id              = models.ForeignKey("Patient", on_delete=models.CASCADE)
     symptom_id              = models.ForeignKey("Symptom", on_delete=models.CASCADE)
-    
 
-class User(models.Model):
-    class Meta:
-        db_table = 'user'
-        abstract = True
 
-    id                      = models.CharField(max_length=255, primary_key=True)
-    email                   = models.CharField(max_length=255)
-    hashedPassword          = models.CharField(max_length=255)
-    firstName               = models.CharField(max_length=255)
-    lastName                = models.CharField(max_length=255)
-    
-    age                     = models.IntegerField(blank=True, null=True)
-    dob                     = models.CharField(max_length=255, blank=True, null=True)
-    gender                  = models.CharField(max_length=255, blank=True, null=True)
-    phone                   = models.CharField(max_length=255, blank=True, null=True)
-    avatar                  = models.CharField(max_length=255, blank=True, null=True)
-    address                 = models.CharField(max_length=255, blank=True, null=True)
-    
-    disabled                = models.BooleanField(default=False)
-    
+# ----------------------------------------------------------------------------------------------------
 
-class Practitioner(User):
+
+class CustomUser(User):
+    ROLE_CHOICES = [
+        ('practitioner', 'Practitioner'),
+        ('patient', 'Patient'),
+    ]
+    role = models.CharField(max_length=12, choices=ROLE_CHOICES)
+
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+
+        if is_new:
+            if self.role == 'practitioner':
+                Practitioner.objects.create(user=self)
+            elif self.role == 'patient':
+                Patient.objects.create(user=self)
+
+    @property
+    def is_practitioner(self):
+        return self.role == 'practitioner'
+
+    @property
+    def is_patient(self):
+        return self.role == 'patient'
+
+
+class Practitioner(models.Model):
     class Meta:
         db_table = 'practitioner'
-        
+    
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='practitioner')
+    
     diseases                = models.ManyToManyField("Disease", through=PractitionerDiseaseLink)
-    symptoms                = models.ManyToManyField("Symptom", through=PractitionerSymptomLink)
     patients                = models.ManyToManyField("Patient", through=PractionerPatientLink)
 
 
-
-class Patient(User):
+class Patient(models.Model):
     class Meta:
         db_table = 'patient'
 
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient')
+    
     diseases                = models.ManyToManyField("Disease", through=PatientDiseaseLink)
     symptoms                = models.ManyToManyField("Symptom", through=PatientSymptomLink)
     practitioners           = models.ManyToManyField("Practitioner", through=PractionerPatientLink)
-
 
 
 # ----------------------------------------------------------------------------------------------------

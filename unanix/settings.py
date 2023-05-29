@@ -17,12 +17,12 @@ import dotenv
 
 dotenv.load_dotenv()
 
-UNANIXDB_URI         = os.getenv('UNANIXDB_URI', default="")
-UNANIXDB_DB          = os.getenv('UNANIXDB_DB', default="")
-UNANIXDB_HOST        = os.getenv('UNANIXDB_HOST', default="")
-UNANIXDB_USER        = os.getenv('UNANIXDB_USER', default="")
-UNANIXDB_PASSWORD    = os.getenv('UNANIXDB_PASSWORD', default="")
-UNANIXDB_PORT        = os.getenv('UNANIXDB_PORT', default="")
+UNANIXDB_URI              = os.getenv('UNANIXDB_URI', default="")
+UNANIXDB_DB               = os.getenv('UNANIXDB_DB', default="")
+UNANIXDB_HOST             = os.getenv('UNANIXDB_HOST', default="")
+UNANIXDB_USER             = os.getenv('UNANIXDB_USER', default="")
+UNANIXDB_PASSWORD         = os.getenv('UNANIXDB_PASSWORD', default="")
+UNANIXDB_PORT             = os.getenv('UNANIXDB_PORT', default="")
 
 UNANIDATABASE_URI         = os.getenv('UNANIDATABASE_URI', default="")
 UNANIDATABASE_DB          = os.getenv('UNANIDATABASE_DB', default="")
@@ -74,6 +74,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'unanix.urls'
+
+LOGIN_REDIRECT_URL = 'home'
 
 TEMPLATES = [
     {
@@ -154,9 +156,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend', 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'frontend', 'static'),
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
