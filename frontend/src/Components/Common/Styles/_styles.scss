@@ -1,0 +1,10 @@
+$cards-color: #171F34;
+$border-and-shadows-color: rgb(200, 200, 200);
+
+.cards_style {
+    border: $border-and-shadows-color solid 1px;
+    box-shadow: $border-and-shadows-color 0px 0px 2.5px;
+    border-radius: 0.25vw;
+    padding: 0.5vw 1.5vw;
+    background-color: $cards-color;
+}

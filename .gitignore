@@ -6,3 +6,10 @@ venv
 
 # env variables
 .env
+
+
+# python
+*.py[cod]
+*.pyc
+__pycache__/
+*.so

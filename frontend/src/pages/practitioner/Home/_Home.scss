@@ -1,0 +1,11 @@
+.home {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 9fr;
+  background-color: #171F34;
+
+
+  .homeContainer {
+    width: 100%;
+  }
+}

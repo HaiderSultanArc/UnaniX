@@ -1,35 +1,94 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {PaletteMode} from '@mui/material';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import React, {useEffect} from 'react';
+import {Route, Routes} from 'react-router';
+import './App.css';
+import LoginAsPatient from './Components/Login/LoginAsPatient';
+import LoginAsPractitioner from './Components/Login/LoginAsPractitioner';
+import SignUpAsPatient from './Components/SignUp/SignUpAsPatient';
+import SignUpAsPractitioner from './Components/SignUp/SignUpPractitioner';
+import {auth} from './firebase/firebase';
+import Home from './pages/patient/Home/Home';
+import {getTheme} from './Theme';
+
+
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const [mode, setMode] = React.useState<PaletteMode>('dark');
+	
+	const colorMode = React.useMemo(
+		() => (
+			{
+				// The dark mode switch would invoke this method
+				toggleColorMode: () => {
+					setMode((prevMode: PaletteMode) =>
+						prevMode === 'light' ? 'dark' : 'light',
+					);
+				},
+			}
+		),[],
+	);
+	
+	
+	useEffect(
+        () => {
+            const unsubscribe = auth.onAuthStateChanged(
+                (authUser) => {
+                    if (authUser) {
+                        setCurrentUser(authUser);
+                    }
+                    else {
+                        setCurrentUser(null);
+                    }
+                }
+            )
+            
+            return () => {
+                unsubscribe();
+            }
+        }, []
+    )
+  
+	// Update the theme only if the mode changes
+	const theme = React.useMemo(() => createTheme(getTheme(mode)), [mode]);
+	
+	return (
+		<ColorModeContext.Provider value={colorMode}>
+			<ThemeProvider theme={theme}>
+				{/* <Home /> */}
+				{
+					
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/sign_up_as_patient" element={<SignUpAsPatient />} />
+						<Route path="/sign_up_as_practitioner" element={<SignUpAsPractitioner />} />
+						<Route path="/login_as_patient" element={<LoginAsPatient />} />
+						<Route path="/login_as_practitioner" element={<LoginAsPractitioner />} />
+					</Routes>
+					// currentUser ? (
+					// 	<Routes>
+					// 		<Route path={'/'} element={<Navigate to="/home" />} />
+					// 		<Route path={'/login'} element={<Navigate to="/home" />} />
+					// 		<Route path={'/practitioner_login'} element={<Navigate to="/home" />} />
+					// 		<Route path={'/patient_login'} element={<Navigate to="/home" />} />
+					// 		<Route path='/home' element={<Home />} />
+					// 	</Routes>
+					// ) : (
+					// 	<Routes>
+					// 		<Route path="*" element={<Navigate to="/" />} />
+					// 		<Route path="/" element={<LandingPage />} />
+					// 		<Route path='/login' element={<Login_As />} />
+					// 		<Route path='/practitioner_login' element={<LoginAsPractitioner />} />
+					// 		<Route path='/patient_login' element={<LoginAsPatient user={currentUser} setUser={setCurrentUser} />} />
+					// 	</Routes>
+					// )
+				}
+				{/* <MakeAppointment /> */}
+			</ThemeProvider>
+		</ColorModeContext.Provider>
+	);
 }
+  
 
-export default App
+export default App;
